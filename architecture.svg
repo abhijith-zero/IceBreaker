@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#52525b"/></marker>
+    <marker id="b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/></marker>
+    <marker id="p" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a855f7"/></marker>
+    <marker id="g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
+    <marker id="o" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f97316"/></marker>
+    <marker id="t" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#14b8a6"/></marker>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto-start-reverse"><path d="M0,0 L0,6 L8,3 z" fill="#a855f7"/></marker>
+  </defs>
+
+  <rect width="900" height="620" fill="#09090b"/>
+
+  <text x="450" y="36" text-anchor="middle" fill="#fafafa" font-size="17" font-weight="700">IceBreaker — Architecture</text>
+
+  <!-- ── FRONTEND ── -->
+  <rect x="40" y="60" width="200" height="300" rx="14" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="140" y="84" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="700" letter-spacing="0.5">FRONTEND</text>
+
+  <rect x="60" y="96" width="160" height="40" rx="9" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.35)" stroke-width="1"/>
+  <text x="140" y="117" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">Screens</text>
+  <text x="140" y="130" text-anchor="middle" fill="#1d4ed8" font-size="9.5">Select · Session · Debrief · Progress</text>
+
+  <rect x="60" y="146" width="160" height="40" rx="9" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.35)" stroke-width="1"/>
+  <text x="140" y="167" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">Gemini Live Hook</text>
+  <text x="140" y="180" text-anchor="middle" fill="#1d4ed8" font-size="9.5">WebSocket · VAD · tool calls</text>
+
+  <rect x="60" y="196" width="160" height="40" rx="9" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.35)" stroke-width="1"/>
+  <text x="140" y="217" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">Components</text>
+  <text x="140" y="230" text-anchor="middle" fill="#1d4ed8" font-size="9.5">Sidebar · CoachingPanel · Webcam</text>
+
+  <rect x="60" y="246" width="160" height="40" rx="9" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.35)" stroke-width="1"/>
+  <text x="140" y="267" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">API Client</text>
+  <text x="140" y="280" text-anchor="middle" fill="#1d4ed8" font-size="9.5">HTTP · REST calls to backend</text>
+
+  <rect x="60" y="296" width="160" height="40" rx="9" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.35)" stroke-width="1"/>
+  <text x="140" y="317" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">Theme + Auth</text>
+  <text x="140" y="330" text-anchor="middle" fill="#1d4ed8" font-size="9.5">Dark/light · guest user ID</text>
+
+  <!-- ── GEMINI LIVE ── -->
+  <rect x="320" y="60" width="200" height="160" rx="14" fill="rgba(168,85,247,0.08)" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="420" y="84" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="700" letter-spacing="0.5">GEMINI LIVE API</text>
+
+  <rect x="340" y="96" width="160" height="40" rx="9" fill="rgba(168,85,247,0.15)" stroke="rgba(168,85,247,0.35)" stroke-width="1"/>
+  <text x="420" y="117" text-anchor="middle" fill="#e9d5ff" font-size="12" font-weight="600">AI Persona</text>
+  <text x="420" y="130" text-anchor="middle" fill="#7e22ce" font-size="9.5">Audio · Video · Real-time conv.</text>
+
+  <rect x="340" y="146" width="160" height="60" rx="9" fill="rgba(168,85,247,0.15)" stroke="rgba(168,85,247,0.35)" stroke-width="1"/>
+  <text x="420" y="165" text-anchor="middle" fill="#e9d5ff" font-size="12" font-weight="600">Tool Calls</text>
+  <text x="420" y="179" text-anchor="middle" fill="#7e22ce" font-size="9.5">submit_tip → live coaching</text>
+  <text x="420" y="193" text-anchor="middle" fill="#7e22ce" font-size="9.5">submit_metrics → scoring data</text>
+
+  <!-- ── BACKEND ── -->
+  <rect x="600" y="60" width="260" height="300" rx="14" fill="rgba(34,197,94,0.06)" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="730" y="84" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700" letter-spacing="0.5">BACKEND</text>
+
+  <rect x="620" y="96" width="220" height="40" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="730" y="117" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">Routes Module</text>
+  <text x="730" y="130" text-anchor="middle" fill="#166534" font-size="9.5">scenarios · sessions · progress · health</text>
+
+  <rect x="620" y="146" width="220" height="40" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="730" y="167" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">Session Module</text>
+  <text x="730" y="180" text-anchor="middle" fill="#166534" font-size="9.5">lifecycle · in-memory state</text>
+
+  <rect x="620" y="196" width="220" height="40" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="730" y="217" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">Metrics Module</text>
+  <text x="730" y="230" text-anchor="middle" fill="#166534" font-size="9.5">score calc · debrief · 6 categories</text>
+
+  <rect x="620" y="246" width="220" height="40" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="730" y="267" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">Scenario Module</text>
+  <text x="730" y="280" text-anchor="middle" fill="#166534" font-size="9.5">5 personas · difficulty · prompts</text>
+
+  <rect x="620" y="296" width="220" height="40" rx="9" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="730" y="317" text-anchor="middle" fill="#86efac" font-size="12" font-weight="600">Persistence Module</text>
+  <text x="730" y="330" text-anchor="middle" fill="#166534" font-size="9.5">Firestore repos · async I/O</text>
+
+  <!-- ── EXTERNAL ── -->
+  <!-- Firestore -->
+  <rect x="40" y="430" width="230" height="100" rx="14" fill="rgba(251,146,60,0.07)" stroke="#f97316" stroke-width="1.5"/>
+  <text x="155" y="454" text-anchor="middle" fill="#fb923c" font-size="12" font-weight="700" letter-spacing="0.5">FIRESTORE</text>
+  <text x="155" y="474" text-anchor="middle" fill="#92400e" font-size="10">sessions/{id} — full debrief</text>
+  <text x="155" y="491" text-anchor="middle" fill="#92400e" font-size="10">users/{id}/sessions — progress</text>
+  <text x="155" y="510" text-anchor="middle" fill="#78350f" font-size="9.5">Google Cloud · async · persistent</text>
+
+  <!-- Cloud Run -->
+  <rect x="310" y="430" width="230" height="100" rx="14" fill="rgba(168,85,247,0.07)" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="425" y="454" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="700" letter-spacing="0.5">CLOUD RUN</text>
+  <text x="425" y="474" text-anchor="middle" fill="#7e22ce" font-size="10">Hosts FastAPI backend</text>
+  <text x="425" y="491" text-anchor="middle" fill="#7e22ce" font-size="10">Docker · cloudbuild.yaml</text>
+  <text x="425" y="510" text-anchor="middle" fill="#581c87" font-size="9.5">ADC · Google Cloud</text>
+
+  <!-- LM Studio -->
+  <rect x="580" y="430" width="280" height="100" rx="14" fill="rgba(20,184,166,0.06)" stroke="#14b8a6" stroke-width="1.5"/>
+  <text x="720" y="454" text-anchor="middle" fill="#2dd4bf" font-size="12" font-weight="700" letter-spacing="0.5">LM STUDIO</text>
+  <text x="720" y="474" text-anchor="middle" fill="#134e4a" font-size="10">Fallback transcript analysis</text>
+  <text x="720" y="491" text-anchor="middle" fill="#134e4a" font-size="10">Gemma-3-4b · local · OpenAI API</text>
+  <text x="720" y="510" text-anchor="middle" fill="#0f3d3a" font-size="9.5">Only if Gemini metrics unavailable</text>
+
+  <!-- ═══ ARROWS ═══ -->
+
+  <!-- Frontend ↔ Gemini Live (bidirectional) -->
+  <line x1="240" y1="166" x2="320" y2="166" stroke="#a855f7" stroke-width="2" marker-end="url(#p)"/>
+  <line x1="320" y1="185" x2="240" y2="185" stroke="#a855f7" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="280" y="161" text-anchor="middle" fill="#7e22ce" font-size="8.5" font-weight="600">mic + video</text>
+  <text x="280" y="198" text-anchor="middle" fill="#7e22ce" font-size="8.5" font-weight="600">audio + tips</text>
+
+  <!-- Frontend → Backend (REST) -->
+  <line x1="240" y1="270" x2="600" y2="270" stroke="#3b82f6" stroke-width="2" marker-end="url(#b)"/>
+  <text x="420" y="262" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">REST HTTP</text>
+
+  <!-- Gemini → Backend (metrics at session end) -->
+  <line x1="520" y1="185" x2="600" y2="215" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#p)"/>
+  <text x="565" y="193" text-anchor="middle" fill="#7e22ce" font-size="8.5" font-weight="600">metrics</text>
+
+  <!-- Backend → Firestore -->
+  <line x1="730" y1="360" x2="730" y2="395" stroke="#52525b" stroke-width="1.5"/>
+  <line x1="730" y1="395" x2="155" y2="395" stroke="#52525b" stroke-width="1.5"/>
+  <line x1="155" y1="395" x2="155" y2="430" stroke="#f97316" stroke-width="1.8" marker-end="url(#o)"/>
+  <text x="440" y="390" text-anchor="middle" fill="#52525b" font-size="9" font-weight="600">persist session + progress</text>
+
+  <!-- Backend → Cloud Run (hosted on) -->
+  <line x1="730" y1="360" x2="730" y2="395" stroke="#52525b" stroke-width="1.5"/>
+  <line x1="730" y1="395" x2="425" y2="395" stroke="#52525b" stroke-width="1.5"/>
+  <line x1="425" y1="395" x2="425" y2="430" stroke="#a855f7" stroke-width="1.8" marker-end="url(#p)"/>
+
+  <!-- Backend → LM Studio (fallback) -->
+  <line x1="730" y1="360" x2="730" y2="430" stroke="#14b8a6" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#t)"/>
+  <text x="748" y="402" fill="#134e4a" font-size="8.5" font-weight="600">fallback</text>
+
+  <!-- ── LEGEND ── -->
+  <text x="450" y="567" text-anchor="middle" fill="#27272a" font-size="10">─────────────────────────────────────────</text>
+  <line x1="100" y1="585" x2="130" y2="585" stroke="#a855f7" stroke-width="2" marker-end="url(#p)"/>
+  <text x="138" y="589" fill="#52525b" font-size="10">WebSocket</text>
+  <line x1="230" y1="585" x2="260" y2="585" stroke="#3b82f6" stroke-width="2" marker-end="url(#b)"/>
+  <text x="268" y="589" fill="#52525b" font-size="10">REST HTTP</text>
+  <line x1="370" y1="585" x2="400" y2="585" stroke="#f97316" stroke-width="2" marker-end="url(#o)"/>
+  <text x="408" y="589" fill="#52525b" font-size="10">Persist</text>
+  <line x1="480" y1="585" x2="510" y2="585" stroke="#14b8a6" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#t)"/>
+  <text x="518" y="589" fill="#52525b" font-size="10">Fallback</text>
+  <line x1="600" y1="585" x2="630" y2="585" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#p)"/>
+  <text x="638" y="589" fill="#52525b" font-size="10">Metrics hand-off</text>
+</svg>
