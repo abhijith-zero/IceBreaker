@@ -128,18 +128,6 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
   }
 
   // ─────────────────────────────────────────
-  // Tip Parser
-  // ─────────────────────────────────────────
-  function tryParseTip(text) {
-    const match = text.match(/Coaching tip:\s*(.+)/i);
-    if (match) {
-      const tip = match[1].trim();
-      setLiveTip(tip);
-      if (onMetricsRef.current) onMetricsRef.current({ tip });
-    }
-  }
-
-  // ─────────────────────────────────────────
   // Connect
   // ─────────────────────────────────────────
   const connect = useCallback(async () => {
@@ -166,7 +154,19 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
           outputAudioTranscription: {},
           systemInstruction: systemPrompt,
           tools: [{
-            functionDeclarations: [{
+            functionDeclarations: [
+            {
+              name: "submit_tip",
+              description: "Call this after every user turn to deliver a coaching tip.",
+              parameters: {
+                type: "OBJECT",
+                properties: {
+                  tip: { type: "STRING", description: "One short encouraging or corrective coaching sentence." },
+                },
+                required: ["tip"],
+              },
+            },
+            {
               name: "submit_metrics",
               description: "Call this at the end of the conversation to submit your assessment of the user's communication performance.",
               parameters: {
@@ -189,6 +189,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
               },
             }],
           }],
+
         },
 
         callbacks: {
@@ -220,17 +221,23 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
           },
 
           onmessage: (message) => {
-            // Tool call — model submitting final metrics
+            // Tool calls
             if (message.toolCall) {
-              const fn = message.toolCall.functionCalls?.[0];
-              if (fn?.name === "submit_metrics") {
-                console.log("📊 submit_metrics tool call:", fn.args);
-                finalMetricsRef.current = fn.args;
-                if (onMetricsRef.current) onMetricsRef.current({ finalMetrics: fn.args });
+              const calls = message.toolCall.functionCalls ?? [];
+              for (const fn of calls) {
+                if (fn.name === "submit_tip") {
+                  console.log("💡 submit_tip:", fn.args.tip);
+                  setLiveTip(fn.args.tip);
+                  if (onMetricsRef.current) onMetricsRef.current({ tip: fn.args.tip });
+                } else if (fn.name === "submit_metrics") {
+                  console.log("📊 submit_metrics:", fn.args);
+                  finalMetricsRef.current = fn.args;
+                  if (onMetricsRef.current) onMetricsRef.current({ finalMetrics: fn.args });
+                }
               }
-              // Send tool response so the model doesn't wait
+              // Acknowledge all calls so the model doesn't wait
               sessionRef.current?.sendToolResponse({
-                functionResponses: [{ id: fn?.id, name: fn?.name, response: { result: "ok" } }],
+                functionResponses: calls.map((fn) => ({ id: fn.id, name: fn.name, response: { result: "ok" } })),
               });
               return;
             }
@@ -273,7 +280,6 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
               if (textBufferRef.current.trim()) {
                 metricsTranscriptRef.current += textBufferRef.current + "\n---\n";
               }
-              tryParseTip(textBufferRef.current);
               textBufferRef.current = "";
             }
           },

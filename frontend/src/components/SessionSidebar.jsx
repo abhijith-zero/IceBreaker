@@ -13,16 +13,15 @@ const ACCENTS = {
  * Props:
  *   scenario       { id, name, difficulty, persona_name, opening_line }
  *   timer          string "mm:ss"
- *   talkRatio      number 0-1
  *   isConnected    bool
  *   onEnd          fn()
  */
 export function SessionSidebar({
   scenario,
   timer,
-  talkRatio = 0,
   isConnected,
   onEnd,
+  onHome,
 }) {
   const accent = ACCENTS[scenario?.id] ?? "#4ECDC4";
   const initials = scenario?.persona_name
@@ -35,7 +34,7 @@ export function SessionSidebar({
   return (
     <aside className="w-70 shrink-0 flex flex-col gap-4 h-screen sticky top-0 p-5 border-r border-white/6 bg-[#0D1117]">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 mb-2">
+      <button onClick={onHome} className="flex items-center gap-2.5 mb-2 hover:opacity-80 transition-opacity text-left">
         <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#4ECDC4] to-[#2B6CB0] flex items-center justify-center shrink-0">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <circle cx="8" cy="8" r="3" fill="white" />
@@ -50,7 +49,7 @@ export function SessionSidebar({
         <span className="text-xs font-semibold tracking-[0.2em] uppercase text-[#4ECDC4]">
           Icebreaker
         </span>
-      </div>
+      </button>
 
       <div className="h-px bg-white/6" />
 
@@ -100,32 +99,6 @@ export function SessionSidebar({
         </p>
       </div>
 
-      {/* Talk ratio */}
-      <div className="p-4 rounded-xl bg-white/3 border border-white/6">
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-[11px] text-[#4B5563] uppercase tracking-widest">
-            Talk Ratio
-          </p>
-          <p className="text-[12px] font-mono text-white">
-            {Math.round(talkRatio * 100)}%
-          </p>
-        </div>
-        <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{
-              width: `${talkRatio * 100}%`,
-              background:
-                talkRatio > 0.65
-                  ? "#EF4444"
-                  : talkRatio > 0.45
-                    ? "#10B981"
-                    : "#F59E0B",
-            }}
-          />
-        </div>
-        <p className="text-[10px] text-[#374151] mt-1.5">Ideal: 40–60%</p>
-      </div>
 
       {/* Spacer */}
       <div className="flex-1" />

@@ -6,19 +6,17 @@ import { useGeminiLive } from "../hooks/useGeminiLive";
 import { useSessionTimer } from "../hooks/useSessionTimer";
 import { api } from "../lib/api";
 
-export function PracticeSession({ context, onSessionEnd }) {
+export function PracticeSession({ context, onSessionEnd, onExit }) {
   const { scenario, systemPrompt, sessionId } = context;
 
   const [started, setStarted] = useState(false);
   const [isEnding, setIsEnding] = useState(false);
-  const [talkRatio, setTalkRatio] = useState(0);
   const [liveTipState, setLiveTipState] = useState(null);
 
   const { formatted: timerDisplay } = useSessionTimer(started);
 
   const handleMetrics = useCallback((metrics) => {
     console.log("📊 Metrics:", metrics);
-    if (metrics.talk_ratio_user != null) setTalkRatio(metrics.talk_ratio_user);
     if (metrics.tip) setLiveTipState(metrics.tip);
   }, []);
 
@@ -93,9 +91,9 @@ export function PracticeSession({ context, onSessionEnd }) {
       <SessionSidebar
         scenario={scenario}
         timer={timerDisplay}
-        talkRatio={talkRatio}
         isConnected={isConnected}
         onEnd={handleEnd}
+        onHome={onExit}
       />
 
       <main className="flex-1 flex flex-col min-w-0 relative">
@@ -116,9 +114,10 @@ export function PracticeSession({ context, onSessionEnd }) {
               <button
                 onClick={toggleMic}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all
-                  ${micActive
-                    ? "bg-white/6 border border-white/10 hover:bg-white/10"
-                    : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
+                  ${
+                    micActive
+                      ? "bg-white/6 border border-white/10 hover:bg-white/10"
+                      : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
                   }`}
               >
                 {micActive ? "🎤" : "🔇"}
@@ -126,9 +125,10 @@ export function PracticeSession({ context, onSessionEnd }) {
               <button
                 onClick={toggleCamera}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all
-                  ${cameraActive
-                    ? "bg-white/6 border border-white/10 hover:bg-white/10"
-                    : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
+                  ${
+                    cameraActive
+                      ? "bg-white/6 border border-white/10 hover:bg-white/10"
+                      : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
                   }`}
               >
                 {cameraActive ? "📷" : "🚫"}

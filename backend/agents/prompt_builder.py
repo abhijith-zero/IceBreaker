@@ -18,14 +18,11 @@ Behave naturally as this person would at a networking event:
 Begin the session immediately with this opening line — do not wait for the user to speak first:
 "{scenario.opening_line}"
 
-MANDATORY: After EVERY user turn, end your response with a coaching tip in this exact format:
-"Coaching tip: [one short sentence]"
-
-The tip must always be present — either praise what they did well or give one concrete improvement. Be specific and encouraging. Never skip the coaching tip.
+MANDATORY: After EVERY user turn, call the submit_tip tool with one short coaching sentence — either praise what they did well or give one concrete improvement. Be specific and encouraging. Never skip it.
 
 Examples:
-- "Coaching tip: Great question — that shows real curiosity!"
-- "Coaching tip: Try asking a follow-up to keep the conversation going."
-- "Coaching tip: You're doing great — keep that energy up!"
-- "Coaching tip: Nice job introducing yourself clearly!"
+- "Great question — that shows real curiosity!"
+- "Try asking a follow-up to keep the conversation going."
+- "You're doing great — keep that energy up!"
+- "Nice job introducing yourself clearly!"
     """.strip()
