@@ -28,10 +28,17 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
   const finalMetricsRef = useRef(null);
 
   const onMetricsRef = useRef(onMetrics);
+  const reconnectAttemptsRef = useRef(0);
+  const reconnectTimerRef = useRef(null);
+  const MAX_RECONNECT_ATTEMPTS = 3;
+  const systemPromptRef = useRef(systemPrompt);
+  const voiceRef = useRef(voice);
+  const withVideoRef = useRef(withVideo);
 
-  useEffect(() => {
-    onMetricsRef.current = onMetrics;
-  }, [onMetrics]);
+  useEffect(() => { onMetricsRef.current = onMetrics; }, [onMetrics]);
+  useEffect(() => { systemPromptRef.current = systemPrompt; }, [systemPrompt]);
+  useEffect(() => { voiceRef.current = voice; }, [voice]);
+  useEffect(() => { withVideoRef.current = withVideo; }, [withVideo]);
 
   // ─────────────────────────────────────────
   // Media Setup
@@ -172,14 +179,25 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
         callbacks: {
           onopen: async () => {
             console.log("✅ Gemini connected");
+            const isReconnect = !!metricsTranscriptRef.current.trim();
+            reconnectAttemptsRef.current = 0;
+            setIsDropped(false);
             await startMedia();
             setIsConnected(true);
-            // Nudge Gemini to deliver its opening line — the system instruction
-            // already specifies the exact line to use for this scenario.
-            sessionRef.current?.sendClientContent({
-              turns: [{ role: "user", parts: [{ text: "Please start the conversation." }] }],
-              turnComplete: true,
-            });
+
+            if (isReconnect) {
+              // Resume — give Gemini the conversation history so it can continue
+              sessionRef.current?.sendClientContent({
+                turns: [{ role: "user", parts: [{ text: `The connection was briefly interrupted. Here is our conversation so far:\n\n${metricsTranscriptRef.current}\n\nPlease continue naturally from where we left off, without restarting or re-introducing yourself.` }] }],
+                turnComplete: true,
+              });
+            } else {
+              // Fresh start — nudge Gemini to deliver its opening line
+              sessionRef.current?.sendClientContent({
+                turns: [{ role: "user", parts: [{ text: "Please start the conversation." }] }],
+                turnComplete: true,
+              });
+            }
           },
 
           onclose: (e) => {
@@ -187,14 +205,23 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
 
             setIsConnected(false);
             setIsSpeaking(false);
+            sessionRef.current = null;
+            isConnectingRef.current = false;
 
             if (!intentionalCloseRef.current) {
               console.warn("⚠️ Session dropped unexpectedly:", e?.code, e?.reason);
-              setIsDropped(true);
-            }
 
-            sessionRef.current = null;
-            isConnectingRef.current = false;
+              if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+                const delay = 1500 * (reconnectAttemptsRef.current + 1);
+                reconnectAttemptsRef.current += 1;
+                console.log(`🔄 Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`);
+                reconnectTimerRef.current = setTimeout(() => connect(), delay);
+              } else {
+                console.warn("❌ Max reconnect attempts reached");
+                setIsDropped(true);
+                reconnectAttemptsRef.current = 0;
+              }
+            }
           },
 
           onerror: (e) => {
@@ -303,6 +330,9 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
     videoStreamRef.current?.getTracks().forEach((t) => t.stop());
     videoStreamRef.current = null;
     canvasRef.current = null;
+    clearTimeout(reconnectTimerRef.current);
+    reconnectTimerRef.current = null;
+    reconnectAttemptsRef.current = 0;
     intentionalCloseRef.current = true;
     sessionRef.current?.close();
     sessionRef.current = null;

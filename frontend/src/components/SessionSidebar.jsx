@@ -33,7 +33,7 @@ export function SessionSidebar({
     .toUpperCase();
 
   return (
-    <aside className="w-70 shrink-0 flex flex-col gap-4 h-screen sticky top-0 p-5 border-r border-(--border-color) bg-(--bg)">
+    <aside className="hidden md:flex w-70 shrink-0 flex-col gap-4 h-screen sticky top-0 p-5 border-r border-(--border-color) bg-(--bg)">
       {/* Logo */}
       <div className="mb-2">
         <IcebreakerLogo size="md" onClick={onHome} />

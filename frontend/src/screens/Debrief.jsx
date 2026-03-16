@@ -35,27 +35,27 @@ export function Debrief({ debrief, scenario, onHome, onViewProgress }) {
   }));
 
   return (
-    <div className="min-h-screen bg-(--bg) px-6 py-10">
+    <div className="min-h-screen bg-(--bg) px-4 md:px-6 py-8 md:py-10">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div
-          className="flex items-center justify-between"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
           style={{ animation: "fadeSlideUp 0.4s ease forwards" }}
         >
           <div>
             <div className="mb-1">
               <IcebreakerLogo size="sm" />
             </div>
-            <h1 className="text-3xl font-bold text-(--fg)">Session Complete</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-(--fg)">Session Complete</h1>
             <p className="text-(--muted) text-sm mt-1">
               {scenario?.name} · with {scenario?.persona_name}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
               onClick={onViewProgress}
-              className="px-4 py-2 rounded-xl border border-(--border-color) text-[13px] text-(--muted) hover:text-(--fg) hover:border-(--border-color) transition-all"
+              className="px-4 py-2 rounded-xl border border-(--border-color) text-[13px] text-(--muted) hover:text-(--fg) transition-all"
             >
               View Progress
             </button>
@@ -105,7 +105,7 @@ export function Debrief({ debrief, scenario, onHome, onViewProgress }) {
 
         {/* Second score row */}
         <div
-          className="grid grid-cols-3 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4"
           style={{
             animation: "fadeSlideUp 0.4s ease forwards",
             animationDelay: "120ms",

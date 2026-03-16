@@ -104,10 +104,10 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
 
       <main className="flex-1 flex flex-col min-w-0 relative">
         {/* Top bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border-color)">
+        <div className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-(--border-color)">
           <div>
-            <h1 className="text-lg font-semibold text-(--fg)">Practice Arena</h1>
-            <p className="text-[12px] text-(--subtle)">
+            <h1 className="text-base md:text-lg font-semibold text-(--fg)">Practice Arena</h1>
+            <p className="text-[11px] md:text-[12px] text-(--subtle)">
               {!started
                 ? "Ready to start"
                 : isConnected
@@ -115,31 +115,31 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
                   : "Connecting…"}
             </p>
           </div>
-          {started && (
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
+          <div className="flex items-center gap-2">
+            {/* Timer — mobile only */}
+            {started && (
+              <span className="md:hidden font-mono text-sm font-bold text-(--fg) tabular-nums">
+                {timerDisplay}
+              </span>
+            )}
+            <ThemeToggle />
+            {started && (
               <button
                 onClick={toggleMic}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all
-                  ${
-                    micActive
-                      ? "bg-(--faint) border border-(--border-color) hover:bg-white/10"
-                      : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
+                className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center text-lg transition-all
+                  ${micActive
+                    ? "bg-(--faint) border border-(--border-color) hover:bg-white/10"
+                    : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
                   }`}
               >
                 {micActive ? "🎤" : "🔇"}
               </button>
-              {mediaMode === "video" && (
-                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-(--faint) border border-(--border-color)">
-                  📷
-                </span>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-5 p-6">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 md:p-6 pb-24 md:pb-6">
           {/* Left — persona */}
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl border border-(--border-color) bg-(--surface) aspect-video flex items-center justify-center">
@@ -226,6 +226,22 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
 
           {/* Right — live coaching */}
           <CoachingPanel liveTip={displayTip} isConnected={isConnected} />
+        </div>
+
+        {/* Mobile bottom bar */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 flex items-center justify-between px-4 py-3 border-t border-(--border-color) bg-(--bg) z-40">
+          <div>
+            <p className="text-[11px] text-(--subtle) uppercase tracking-widest">Scenario</p>
+            <p className="text-[13px] font-medium text-(--fg) truncate max-w-35">{scenario.name}</p>
+          </div>
+          <button
+            onClick={handleEnd}
+            disabled={isEnding || !started}
+            className="px-4 py-2 rounded-xl border border-red-500/25 text-red-400 text-[13px] font-medium
+                       hover:bg-red-500/10 disabled:opacity-40 transition-all"
+          >
+            End Session
+          </button>
         </div>
 
         {/* Ending overlay */}
