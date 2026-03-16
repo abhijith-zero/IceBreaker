@@ -12,6 +12,7 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
 
   const [started, setStarted] = useState(false);
   const [isEnding, setIsEnding] = useState(false);
+  const [noParticipation, setNoParticipation] = useState(false);
   const [liveTipState, setLiveTipState] = useState(null);
   const [mediaMode, setMediaMode] = useState("audio"); // "audio" | "video"
 
@@ -36,6 +37,7 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
     liveTip,
     getTranscript,
     getMetrics,
+    hasUserSpoken,
     requestMetrics,
   } = useGeminiLive({
     systemPrompt,
@@ -80,6 +82,13 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
         }
       }, 200);
     });
+
+    if (!hasUserSpoken()) {
+      releaseMedia();
+      setIsEnding(false);
+      setNoParticipation(true);
+      return;
+    }
 
     releaseMedia();
     try {
@@ -264,6 +273,29 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
             <div className="flex flex-col items-center gap-4">
               <div className="w-10 h-10 rounded-full border-2 border-[#EAB308]/20 border-t-[#EAB308] animate-spin" />
               <p className="text-(--fg) text-sm">Generating your debrief…</p>
+            </div>
+          </div>
+        )}
+
+        {/* No participation overlay */}
+        {noParticipation && (
+          <div className="absolute inset-0 bg-(--bg)/90 flex items-center justify-center z-50">
+            <div className="flex flex-col items-center gap-4 text-center max-w-sm px-6">
+              <div className="w-12 h-12 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center text-xl">
+                🎤
+              </div>
+              <div>
+                <p className="text-(--fg) font-semibold">You didn't say anything</p>
+                <p className="text-(--muted) text-sm mt-1">
+                  Scores are only generated when you participate in the conversation.
+                </p>
+              </div>
+              <button
+                onClick={() => { setNoParticipation(false); onExit(); }}
+                className="px-5 py-2 rounded-xl bg-[#EAB308] text-[#09090b] text-sm font-semibold hover:bg-[#CA8A04] transition-colors"
+              >
+                Back to Home
+              </button>
             </div>
           </div>
         )}

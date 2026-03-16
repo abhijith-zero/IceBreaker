@@ -26,6 +26,7 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
   const metricsTranscriptRef = useRef("");
   const textBufferRef = useRef("");
   const finalMetricsRef = useRef(null);
+  const userSpokeRef = useRef(false);
 
   const onMetricsRef = useRef(onMetrics);
   const reconnectAttemptsRef = useRef(0);
@@ -292,6 +293,11 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
               }
             }
 
+            // Input audio transcription — user's speech
+            if (sc.inputTranscription?.text?.trim()) {
+              userSpokeRef.current = true;
+            }
+
             // Output audio transcription — JS equivalent of Python's response.text
             if (sc.outputTranscription?.text) {
               console.log("📝 transcription:", sc.outputTranscription.text.slice(0, 120));
@@ -370,6 +376,10 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
     return metricsTranscriptRef.current;
   }
 
+  function hasUserSpoken() {
+    return userSpokeRef.current;
+  }
+
   function getMetrics() {
     return finalMetricsRef.current;
   }
@@ -393,6 +403,7 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
     liveTip,
     getTranscript,
     getMetrics,
+    hasUserSpoken,
     requestMetrics,
   };
 }

@@ -17,6 +17,9 @@ class CoachingService:
     def generate_debrief(self, session: SessionState, metrics: dict | None = None) -> Debrief:
         # Use tool-call metrics from the Live session if available
         if metrics:
+            if float(metrics.get("talk_ratio_user", 0)) == 0:
+                logger.warning("talk_ratio_user is 0 — user did not participate, returning empty debrief")
+                return self._empty_debrief()
             logger.info("Building debrief from Live session tool-call metrics")
             return self._debrief_from_analysis(metrics, session)
 
