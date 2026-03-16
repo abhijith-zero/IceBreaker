@@ -45,15 +45,10 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
 
   return (
     <div className="min-h-screen bg-(--bg) px-4 md:px-6 py-8 md:py-12">
-      {/* Header */}
-      <div className="max-w-5xl mx-auto mb-10">
-        <div className="flex items-center justify-between mb-8">
-          {/* Logo */}
-          <div>
-            <IcebreakerLogo size="lg" />
-          </div>
-
-          {/* Progress link + theme toggle */}
+      {/* Top nav */}
+      <div className="max-w-5xl mx-auto mb-12">
+        <div className="flex items-center justify-between">
+          <IcebreakerLogo size="lg" />
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
@@ -64,13 +59,80 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
             </button>
           </div>
         </div>
+      </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-          Choose your scenario
+      {/* Hero */}
+      <div
+        className="max-w-3xl mx-auto text-center mb-14"
+        style={{ animation: "fadeSlideUp 0.5s ease both" }}
+      >
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-(--accent)/10 border border-(--accent)/20 text-(--accent) text-xs font-medium mb-5">
+          <span className="w-1.5 h-1.5 rounded-full bg-(--accent) inline-block" />
+          AI-powered conversation practice
+        </div>
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 leading-tight">
+          Practice networking.
+          <br />
+          <span className="text-(--accent)">Build real confidence.</span>
         </h1>
-        <p className="text-(--muted) text-lg max-w-lg">
-          Practice real conversations with an AI persona. Live coaching helps
-          you improve with every session.
+        <p className="text-(--muted) text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+          Talk with an AI persona in realistic networking scenarios. Get live
+          coaching and detailed feedback — so you're ready when it counts.
+        </p>
+      </div>
+
+      {/* How it works */}
+      <div className="max-w-5xl mx-auto mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {
+              step: "1",
+              title: "Pick a scenario",
+              desc: "Choose from 5 real-world situations — from casual small talk to cold introductions at a booth.",
+              delay: 100,
+            },
+            {
+              step: "2",
+              title: "Talk with an AI",
+              desc: "Have a live voice conversation with an AI persona that responds naturally, just like a real person.",
+              delay: 175,
+            },
+            {
+              step: "3",
+              title: "Get your debrief",
+              desc: "See your score, talk ratio, filler words, confidence arc, and specific tips to improve.",
+              delay: 250,
+            },
+          ].map(({ step, title, desc, delay }) => (
+            <div
+              key={step}
+              className="rounded-2xl border border-(--border) bg-(--card) p-5"
+              style={{ animation: `fadeSlideUp 0.5s ${delay}ms ease both` }}
+            >
+              <div>
+                <p className="text-[11px] font-semibold text-(--accent) uppercase tracking-widest mb-1">
+                  Step {step}
+                </p>
+                <p className="font-semibold text-(--fg) text-sm mb-1">
+                  {title}
+                </p>
+                <p className="text-(--muted) text-xs leading-relaxed">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Scenario section heading */}
+      <div
+        className="max-w-5xl mx-auto mb-5"
+        style={{ animation: "fadeSlideUp 0.5s 300ms ease both" }}
+      >
+        <h2 className="text-xl font-bold tracking-tight">
+          Choose your scenario
+        </h2>
+        <p className="text-(--muted) text-sm mt-1">
+          Start easy, then work your way up.
         </p>
       </div>
 
@@ -89,7 +151,7 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
             scenario={scenario}
             isLoading={loadingId === scenario.id}
             isDisabled={!!loadingId && loadingId !== scenario.id}
-            animationDelay={i * 75}
+            animationDelay={300 + i * 75}
             onSelect={handleSelect}
           />
         ))}
