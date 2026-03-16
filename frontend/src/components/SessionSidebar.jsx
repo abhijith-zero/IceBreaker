@@ -1,4 +1,5 @@
 import { DifficultyBadge } from "./DifficultyBadge";
+import { IcebreakerLogo } from "./IcebreakerLogo";
 
 const ACCENTS = {
   warmup: "#D97706",
@@ -23,7 +24,7 @@ export function SessionSidebar({
   onEnd,
   onHome,
 }) {
-  const accent = ACCENTS[scenario?.id] ?? "#4ECDC4";
+  const accent = ACCENTS[scenario?.id] ?? "#EAB308";
   const initials = scenario?.persona_name
     ?.split(" ")
     .map((n) => n[0])
@@ -32,51 +33,38 @@ export function SessionSidebar({
     .toUpperCase();
 
   return (
-    <aside className="w-70 shrink-0 flex flex-col gap-4 h-screen sticky top-0 p-5 border-r border-white/6 bg-[#0D1117]">
+    <aside className="w-70 shrink-0 flex flex-col gap-4 h-screen sticky top-0 p-5 border-r border-(--border-color) bg-(--bg)">
       {/* Logo */}
-      <button onClick={onHome} className="flex items-center gap-2.5 mb-2 hover:opacity-80 transition-opacity text-left">
-        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#4ECDC4] to-[#2B6CB0] flex items-center justify-center shrink-0">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="3" fill="white" />
-            <path
-              d="M8 1v2M8 13v2M1 8h2M13 8h2"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
-        <span className="text-xs font-semibold tracking-[0.2em] uppercase text-[#4ECDC4]">
-          Icebreaker
-        </span>
-      </button>
+      <div className="mb-2">
+        <IcebreakerLogo size="md" onClick={onHome} />
+      </div>
 
-      <div className="h-px bg-white/6" />
+      <div className="h-px bg-(--border-color)" />
 
       {/* Scenario info */}
       <div>
-        <p className="text-[11px] text-[#4B5563] uppercase tracking-widest mb-2">
+        <p className="text-[11px] text-(--subtle) uppercase tracking-widest mb-2">
           Current Scenario
         </p>
-        <h2 className="text-[15px] font-semibold text-white mb-1.5">
+        <h2 className="text-[15px] font-semibold text-(--fg) mb-1.5">
           {scenario?.name}
         </h2>
         <DifficultyBadge difficulty={scenario?.difficulty} />
       </div>
 
       {/* Persona */}
-      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/6">
+      <div className="flex items-center gap-3 p-3 rounded-xl bg-(--faint) border border-(--border-color)">
         <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-(--fg) shrink-0"
           style={{ background: `${accent}35`, border: `1px solid ${accent}55` }}
         >
           {initials}
         </div>
         <div>
-          <p className="text-[13px] font-medium text-white">
+          <p className="text-[13px] font-medium text-(--fg)">
             {scenario?.persona_name}
           </p>
-          <p className="text-[11px] text-[#4B5563]">AI Persona</p>
+          <p className="text-[11px] text-(--subtle)">AI Persona</p>
         </div>
         {/* Connection status dot */}
         <div className="ml-auto relative">
@@ -90,11 +78,11 @@ export function SessionSidebar({
       </div>
 
       {/* Timer */}
-      <div className="p-4 rounded-xl bg-white/3 border border-white/6 text-center">
-        <p className="text-[11px] text-[#4B5563] uppercase tracking-widest mb-1">
+      <div className="p-4 rounded-xl bg-(--faint) border border-(--border-color) text-center">
+        <p className="text-[11px] text-(--subtle) uppercase tracking-widest mb-1">
           Session Time
         </p>
-        <p className="text-3xl font-bold tracking-tight font-mono text-white">
+        <p className="text-3xl font-bold tracking-tight font-mono text-(--fg)">
           {timer}
         </p>
       </div>

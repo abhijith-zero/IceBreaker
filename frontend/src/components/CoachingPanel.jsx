@@ -33,20 +33,20 @@ export function CoachingPanel({ liveTip, isConnected }) {
   return (
     <div className="flex flex-col gap-4">
       {/* Live Coaching card */}
-      <div className="rounded-2xl border border-white/6 bg-[#111827] p-5">
+      <div className="rounded-2xl border border-(--border-color) bg-(--surface) p-5">
         <div className="flex items-center gap-2 mb-4">
           {/* Pulsing dot when connected */}
           <div className="relative w-4 h-4 flex items-center justify-center">
             <div
-              className={`w-2 h-2 rounded-full ${isConnected ? "bg-[#4ECDC4]" : "bg-[#374151]"}`}
+              className={`w-2 h-2 rounded-full ${isConnected ? "bg-[#EAB308]" : "bg-[#374151]"}`}
             />
             {isConnected && (
-              <div className="absolute inset-0 rounded-full bg-[#4ECDC4]/30 animate-ping" />
+              <div className="absolute inset-0 rounded-full bg-[#EAB308]/30 animate-ping" />
             )}
           </div>
-          <p className="text-[13px] font-semibold text-white">Live Coaching</p>
+          <p className="text-[13px] font-semibold text-(--fg)">Live Coaching</p>
           {isConnected && (
-            <span className="ml-auto text-[10px] text-[#4ECDC4] bg-[#4ECDC4]/10 px-2 py-0.5 rounded-full border border-[#4ECDC4]/20">
+            <span className="ml-auto text-[10px] text-[#EAB308] bg-[#EAB308]/10 px-2 py-0.5 rounded-full border border-[#EAB308]/20">
               LIVE
             </span>
           )}
@@ -56,15 +56,15 @@ export function CoachingPanel({ liveTip, isConnected }) {
         <div className="min-h-20 flex items-center justify-center">
           {liveTip ? (
             <div ref={tipRef} className="flex gap-3 items-start">
-              <span className="text-[#4ECDC4] text-lg shrink-0 mt-0.5">💡</span>
-              <p className="text-[14px] text-white leading-relaxed">
+              <span className="text-[#EAB308] text-lg shrink-0 mt-0.5">💡</span>
+              <p className="text-[14px] text-(--fg) leading-relaxed">
                 {liveTip}
               </p>
             </div>
           ) : (
             <div className="text-center">
               <div className="text-[#374151] text-3xl mb-2">✦</div>
-              <p className="text-[13px] text-[#4B5563]">
+              <p className="text-[13px] text-(--subtle)">
                 {isConnected
                   ? "Listening… coaching tips will appear here"
                   : "Start a session to receive real-time coaching tips"}
@@ -75,16 +75,16 @@ export function CoachingPanel({ liveTip, isConnected }) {
       </div>
 
       {/* Quick Tips card */}
-      <div className="rounded-2xl border border-white/6 bg-[#111827] p-5">
+      <div className="rounded-2xl border border-(--border-color) bg-(--surface) p-5">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-[#F59E0B]">⚡</span>
-          <p className="text-[13px] font-semibold text-white">Quick Tips</p>
+          <p className="text-[13px] font-semibold text-(--fg)">Quick Tips</p>
         </div>
         <ul className="space-y-2">
           {QUICK_TIPS.map((tip, i) => (
             <li key={i} className="flex items-start gap-2.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#374151] shrink-0 mt-1.5" />
-              <p className="text-[13px] text-[#6B7280] leading-relaxed">
+              <p className="text-[13px] text-(--muted) leading-relaxed">
                 {tip}
               </p>
             </li>

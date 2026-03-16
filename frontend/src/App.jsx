@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api, getUserId } from "./lib/api";
+import { ThemeProvider } from "./context/ThemeContext";
 
 // Screens — created one by one below
 import { ScenarioSelect } from "./screens/ScenarioSelect";
@@ -45,21 +46,23 @@ export default function App() {
 
   if (scenariosError)
     return (
-      <div className="min-h-screen bg-[#0A0E1A] flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <p className="text-red-400">{scenariosError}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="text-[#4ECDC4] text-sm underline"
-          >
-            Retry
-          </button>
+      <ThemeProvider>
+        <div className="min-h-screen bg-(--bg) flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <p className="text-red-400">{scenariosError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-[#EAB308] text-sm underline"
+            >
+              Retry
+            </button>
+          </div>
         </div>
-      </div>
+      </ThemeProvider>
     );
 
   return (
-    <>
+    <ThemeProvider>
       {screen === "select" && (
         <ScenarioSelect
           scenarios={scenarios}
@@ -88,16 +91,16 @@ export default function App() {
           onHome={goHome}
         />
       )}
-    </>
+    </ThemeProvider>
   );
 }
 
 function FullPageSpinner() {
   return (
-    <div className="min-h-screen bg-[#0A0E1A] flex items-center justify-center">
+    <div className="min-h-screen bg-(--bg) flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-full border-2 border-[#4ECDC4]/20 border-t-[#4ECDC4] animate-spin" />
-        <p className="text-[#6B7280] text-sm">Loading scenarios…</p>
+        <div className="w-10 h-10 rounded-full border-2 border-[#EAB308]/20 border-t-[#EAB308] animate-spin" />
+        <p className="text-(--muted) text-sm">Loading scenarios…</p>
       </div>
     </div>
   );

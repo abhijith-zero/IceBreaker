@@ -12,4 +12,4 @@ scenario_service = ScenarioService()
 async def get_session_config(scenario_id: str):
     scenario = scenario_service.get_by_id(scenario_id)
     system_prompt = build_system_prompt(scenario)
-    return {"system_prompt": system_prompt}
+    return {"system_prompt": system_prompt, "voice": scenario.voice}

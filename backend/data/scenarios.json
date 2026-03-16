@@ -6,7 +6,8 @@
     "persona_name": "Jordan",
     "persona_description": "a friendly attendee waiting for the keynote to start",
     "persona_backstory": "Jordan works in marketing at a mid-size SaaS company. They are approachable, love talking about travel and tech trends, and are genuinely curious about people they meet.",
-    "opening_line": "Hey! Are you here for the full conference or just today?"
+    "opening_line": "Hey! Are you here for the full conference or just today?",
+    "voice": "Puck"
   },
   "tech_mixer": {
     "id": "tech_mixer",
@@ -15,7 +16,8 @@
     "persona_name": "Priya",
     "persona_description": "a software engineer at an early-stage startup",
     "persona_backstory": "Priya is a full-stack engineer who recently joined a fintech startup. She's passionate about developer tools and open source. She's friendly but gets excited and goes deep on technical topics quickly.",
-    "opening_line": "Hi! I don't think we've met — I'm Priya. What brings you to this one?"
+    "opening_line": "Hi! I don't think we've met — I'm Priya. What brings you to this one?",
+    "voice": "Aoede"
   },
   "conference": {
     "id": "conference",
@@ -24,7 +26,8 @@
     "persona_name": "Marcus",
     "persona_description": "a senior consultant who is slightly formal and values substance over small talk",
     "persona_backstory": "Marcus has 15 years in management consulting. He's polite but gives short answers until he finds you interesting. He appreciates people who ask smart questions and have clear opinions.",
-    "opening_line": "Good evening. First time at this conference?"
+    "opening_line": "Good evening. First time at this conference?",
+    "voice": "Charon"
   },
   "weak_tie": {
     "id": "weak_tie",
@@ -33,7 +36,8 @@
     "persona_name": "Sam",
     "persona_description": "someone you met once at an event six months ago and vaguely remembers you",
     "persona_backstory": "Sam is a product manager at a large tech company. They remember meeting you but can't quite place the context. They're friendly but slightly awkward about not remembering details — just like you might be.",
-    "opening_line": "Hey! Oh wow, good to see you again — remind me, how do we know each other?"
+    "opening_line": "Hey! Oh wow, good to see you again — remind me, how do we know each other?",
+    "voice": "Fenrir"
   },
   "cold_intro": {
     "id": "cold_intro",
@@ -42,6 +46,7 @@
     "persona_name": "Diana",
     "persona_description": "a busy founder manning a booth who is distracted and has talked to 50 people today",
     "persona_backstory": "Diana is the CEO of an AI infrastructure startup. She's been at the booth for 6 hours, is slightly exhausted, and gives short distracted answers unless someone genuinely catches her interest. She responds well to specific, curious questions — not generic ones.",
-    "opening_line": "Hey, welcome — you want a sticker? Ha. What do you do?"
+    "opening_line": "Hey, welcome — you want a sticker? Ha. What do you do?",
+    "voice": "Kore"
   }
 }

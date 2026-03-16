@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ScenarioCard } from "../components/ScenarioCard";
 import { api, getUserId } from "../lib/api";
+import { IcebreakerLogo } from "../components/IcebreakerLogo";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 /**
  * ScenarioSelect — Screen 1
@@ -29,6 +31,7 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
       onSessionStart({
         scenario,
         systemPrompt: configRes.system_prompt,
+        voice: configRes.voice ?? "Puck",
         sessionId: sessionRes.session_id,
         userId,
       });
@@ -41,41 +44,31 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] px-6 py-12">
+    <div className="min-h-screen bg-(--bg) px-6 py-12">
       {/* Header */}
       <div className="max-w-5xl mx-auto mb-10">
         <div className="flex items-center justify-between mb-8">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#4ECDC4] to-[#2B6CB0] flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <circle cx="9" cy="9" r="3.5" fill="white" />
-                <path
-                  d="M9 1v2.5M9 14.5V17M1 9h2.5M14.5 9H17"
-                  stroke="white"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <span className="text-sm font-semibold tracking-[0.2em] uppercase text-[#4ECDC4]">
-              Icebreaker
-            </span>
+          <div>
+            <IcebreakerLogo size="lg" />
           </div>
 
-          {/* Progress link */}
-          <button
-            onClick={onViewProgress}
-            className="text-[13px] text-[#6B7280] hover:text-white transition-colors flex items-center gap-1.5"
-          >
-            <span>📈</span> View Progress
-          </button>
+          {/* Progress link + theme toggle */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={onViewProgress}
+              className="text-[13px] text-(--muted) hover:text-(--fg) transition-colors flex items-center gap-1.5"
+            >
+              <span>📈</span> View Progress
+            </button>
+          </div>
         </div>
 
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
           Choose your scenario
         </h1>
-        <p className="text-[#6B7280] text-lg max-w-lg">
+        <p className="text-(--muted) text-lg max-w-lg">
           Practice real conversations with an AI persona. Live coaching helps
           you improve with every session.
         </p>
@@ -102,7 +95,7 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
         ))}
       </div>
 
-      <p className="text-center text-[#374151] text-xs mt-12">
+      <p className="text-center text-(--subtle) text-xs mt-12">
         Sessions are private · Progress saves automatically
       </p>
     </div>

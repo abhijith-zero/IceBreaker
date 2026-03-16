@@ -7,6 +7,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { IcebreakerLogo } from "../components/IcebreakerLogo";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 /**
  * Debrief — Screen 3
@@ -33,7 +35,7 @@ export function Debrief({ debrief, scenario, onHome, onViewProgress }) {
   }));
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] px-6 py-10">
+    <div className="min-h-screen bg-(--bg) px-6 py-10">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div
@@ -41,37 +43,25 @@ export function Debrief({ debrief, scenario, onHome, onViewProgress }) {
           style={{ animation: "fadeSlideUp 0.4s ease forwards" }}
         >
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-7 h-7 rounded-lg bg-linear-to-br from-[#4ECDC4] to-[#2B6CB0] flex items-center justify-center">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="2.5" fill="white" />
-                  <path
-                    d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13"
-                    stroke="white"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-[#4ECDC4]">
-                Icebreaker
-              </span>
+            <div className="mb-1">
+              <IcebreakerLogo size="sm" />
             </div>
-            <h1 className="text-3xl font-bold text-white">Session Complete</h1>
-            <p className="text-[#6B7280] text-sm mt-1">
+            <h1 className="text-3xl font-bold text-(--fg)">Session Complete</h1>
+            <p className="text-(--muted) text-sm mt-1">
               {scenario?.name} · with {scenario?.persona_name}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button
               onClick={onViewProgress}
-              className="px-4 py-2 rounded-xl border border-white/8 text-[13px] text-[#9CA3AF] hover:text-white hover:border-white/20 transition-all"
+              className="px-4 py-2 rounded-xl border border-(--border-color) text-[13px] text-(--muted) hover:text-(--fg) hover:border-(--border-color) transition-all"
             >
               View Progress
             </button>
             <button
               onClick={onHome}
-              className="px-4 py-2 rounded-xl bg-[#4ECDC4] text-[#0A0E1A] text-[13px] font-semibold hover:bg-[#3DBDB4] transition-colors"
+              className="px-4 py-2 rounded-xl bg-[#EAB308] text-[#09090b] text-[13px] font-semibold hover:bg-[#CA8A04] transition-colors"
             >
               Practice Again
             </button>
@@ -90,7 +80,7 @@ export function Debrief({ debrief, scenario, onHome, onViewProgress }) {
           <ScoreRing
             value={score?.total ?? 0}
             label="Overall Score"
-            accent="#4ECDC4"
+            accent="#EAB308"
             large
           />
           <ScoreBar
@@ -179,7 +169,7 @@ export function Debrief({ debrief, scenario, onHome, onViewProgress }) {
               title="Confidence Arc"
               dataKey="confidence"
               data={chartData}
-              color="#4ECDC4"
+              color="#EAB308"
             />
             <ChartCard
               title="Sentiment Arc"
@@ -203,14 +193,14 @@ function ScoreRing({ value, label, accent, large }) {
   const offset = circ - (Math.min(value, 100) / 100) * circ;
 
   return (
-    <div className="rounded-2xl border border-white/6 bg-[#111827] p-5 flex flex-col items-center justify-center gap-2">
+    <div className="rounded-2xl border border-(--border-color) bg-(--surface) p-5 flex flex-col items-center justify-center gap-2">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.06)"
+          stroke="var(--border-color)"
           strokeWidth={stroke}
         />
         <circle
@@ -231,7 +221,7 @@ function ScoreRing({ value, label, accent, large }) {
           y="50%"
           dominantBaseline="middle"
           textAnchor="middle"
-          fill="white"
+          fill="var(--fg)"
           fontSize={large ? 20 : 16}
           fontWeight="700"
           fontFamily="Sora, sans-serif"
@@ -239,7 +229,7 @@ function ScoreRing({ value, label, accent, large }) {
           {Math.round(value)}
         </text>
       </svg>
-      <p className="text-[11px] text-[#6B7280] uppercase tracking-widest text-center">
+      <p className="text-[11px] text-(--muted) uppercase tracking-widest text-center">
         {label}
       </p>
     </div>
@@ -251,15 +241,15 @@ function ScoreBar({ value, max, label, accent }) {
   const pct = Math.min((value / max) * 100, 100);
 
   return (
-    <div className="rounded-2xl border border-white/6 bg-[#111827] p-5">
+    <div className="rounded-2xl border border-(--border-color) bg-(--surface) p-5">
       <div className="flex justify-between items-center mb-2">
-        <p className="text-[12px] text-[#6B7280]">{label}</p>
-        <p className="text-[13px] font-semibold text-white font-mono">
+        <p className="text-[12px] text-(--muted)">{label}</p>
+        <p className="text-[13px] font-semibold text-(--fg) font-mono">
           {value.toFixed(1)}
-          <span className="text-[#4B5563] text-[10px]">/{max}</span>
+          <span className="text-(--subtle) text-[10px]">/{max}</span>
         </p>
       </div>
-      <div className="h-1.5 rounded-full bg-white/6 overflow-hidden">
+      <div className="h-1.5 rounded-full bg-(--faint) overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-1000"
           style={{ width: `${pct}%`, background: accent }}
@@ -272,14 +262,14 @@ function ScoreBar({ value, max, label, accent }) {
 // ── Feedback Card ──────────────────────────────────────────────────────────
 function FeedbackCard({ title, icon, items, accent }) {
   return (
-    <div className="rounded-2xl border border-white/6 bg-[#111827] p-5">
+    <div className="rounded-2xl border border-(--border-color) bg-(--surface) p-5">
       <div className="flex items-center gap-2 mb-4">
         <span>{icon}</span>
-        <p className="text-[13px] font-semibold text-white">{title}</p>
+        <p className="text-[13px] font-semibold text-(--fg)">{title}</p>
       </div>
       <ul className="space-y-2.5">
         {items.length === 0 ? (
-          <li className="text-[13px] text-[#4B5563]">Nothing to show</li>
+          <li className="text-[13px] text-(--subtle)">Nothing to show</li>
         ) : (
           items.map((item, i) => (
             <li key={i} className="flex items-start gap-2.5">
@@ -287,7 +277,7 @@ function FeedbackCard({ title, icon, items, accent }) {
                 className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5"
                 style={{ background: accent }}
               />
-              <p className="text-[13px] text-[#9CA3AF] leading-relaxed">
+              <p className="text-[13px] text-(--muted) leading-relaxed">
                 {item}
               </p>
             </li>
@@ -301,8 +291,8 @@ function FeedbackCard({ title, icon, items, accent }) {
 // ── Chart Card ─────────────────────────────────────────────────────────────
 function ChartCard({ title, dataKey, data, color }) {
   return (
-    <div className="rounded-2xl border border-white/6 bg-[#111827] p-5">
-      <p className="text-[13px] font-semibold text-white mb-4">{title}</p>
+    <div className="rounded-2xl border border-(--border-color) bg-(--surface) p-5">
+      <p className="text-[13px] font-semibold text-(--fg) mb-4">{title}</p>
       <ResponsiveContainer width="100%" height={140}>
         <LineChart
           data={data}
@@ -326,7 +316,7 @@ function ChartCard({ title, dataKey, data, color }) {
           />
           <Tooltip
             contentStyle={{
-              background: "#1F2937",
+              background: "#27272a",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 8,
             }}

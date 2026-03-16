@@ -8,7 +8,7 @@
  */
 export function WebcamPreview({ videoRef, camActive, micActive, isSpeaking }) {
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-[#0D1117] border border-white/6 aspect-video w-full">
+    <div className="relative rounded-2xl overflow-hidden bg-(--bg) border border-(--border-color) aspect-video w-full">
       {/* Video feed */}
       <video
         ref={videoRef}
@@ -20,10 +20,10 @@ export function WebcamPreview({ videoRef, camActive, micActive, isSpeaking }) {
 
       {/* Camera off state */}
       {!camActive && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#0D1117]">
+        <div className="absolute inset-0 flex items-center justify-center bg-(--bg)">
           <div className="text-center">
             <div className="text-4xl mb-2">📷</div>
-            <p className="text-[#4B5563] text-sm">Camera off</p>
+            <p className="text-(--subtle) text-sm">Camera off</p>
           </div>
         </div>
       )}
@@ -59,7 +59,7 @@ function SoundWave() {
       {[1, 2, 3, 2, 1].map((h, i) => (
         <div
           key={i}
-          className="w-0.5 rounded-full bg-[#4ECDC4] animate-bounce"
+          className="w-0.5 rounded-full bg-[#EAB308] animate-bounce"
           style={{
             height: `${h * 4}px`,
             animationDelay: `${i * 80}ms`,

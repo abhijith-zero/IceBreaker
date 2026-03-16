@@ -33,17 +33,17 @@ export function ScenarioCard({
   onSelect,
 }) {
   const icon = ICONS[scenario.id] ?? "💬";
-  const accent = ACCENTS[scenario.id] ?? "#4ECDC4";
+  const accent = ACCENTS[scenario.id] ?? "#EAB308";
 
   return (
     <button
       onClick={() => !isDisabled && !isLoading && onSelect(scenario)}
       disabled={isDisabled || isLoading}
-      className="group relative text-left rounded-2xl border border-white/6 bg-[#111827] p-6
+      className="group relative text-left rounded-2xl border border-(--border-color) bg-(--surface) p-6
                  transition-all duration-300
-                 hover:border-white/20 hover:bg-[#151E2D] hover:scale-[1.02] hover:shadow-xl
+                 hover:border-(--border-color) hover:bg-(--card) hover:scale-[1.02] hover:shadow-xl
                  disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100
-                 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4ECDC4]/50"
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EAB308]/50"
       style={{
         animation: `fadeSlideUp 0.45s ease forwards`,
         animationDelay: `${animationDelay}ms`,
@@ -70,11 +70,11 @@ export function ScenarioCard({
       </div>
 
       {/* Name */}
-      <h3 className="text-[15px] font-semibold text-white mb-1">
+      <h3 className="text-[15px] font-semibold text-(--fg) mb-1">
         {scenario.name}
       </h3>
 
-      <p className="text-[13px] text-[#6B7280] leading-relaxed mb-5">
+      <p className="text-[13px] text-(--muted) leading-relaxed mb-5">
         {scenario.opening_line}
       </p>
 
@@ -82,7 +82,7 @@ export function ScenarioCard({
       <div className="flex items-center gap-2">
         <PersonaAvatar name={scenario.persona_name} accent={accent} />
         <div>
-          <p className="text-[12px] font-medium text-[#9CA3AF]">
+          <p className="text-[12px] font-medium text-(--muted)">
             {scenario.persona_name}
           </p>
         </div>
@@ -90,13 +90,13 @@ export function ScenarioCard({
 
       {/* Loading overlay */}
       {isLoading && (
-        <div className="absolute inset-0 rounded-2xl bg-[#111827]/80 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-2xl bg-(--surface)/80 flex items-center justify-center">
           <LoadingDots accent={accent} />
         </div>
       )}
 
       {/* Arrow hint */}
-      <span className="absolute bottom-6 right-6 text-[#4ECDC4] opacity-0 group-hover:opacity-100 transition-opacity">
+      <span className="absolute bottom-6 right-6 text-[#EAB308] opacity-0 group-hover:opacity-100 transition-opacity">
         →
       </span>
     </button>
@@ -112,7 +112,7 @@ function PersonaAvatar({ name, accent }) {
     .toUpperCase();
   return (
     <div
-      className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+      className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-(--fg) shrink-0"
       style={{ background: `${accent}35`, border: `1px solid ${accent}55` }}
     >
       {initials}

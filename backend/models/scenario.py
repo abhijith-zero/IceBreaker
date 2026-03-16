@@ -9,3 +9,4 @@ class Scenario:
     persona_description: str
     persona_backstory: str
     opening_line: str
+    voice: str = "Puck"

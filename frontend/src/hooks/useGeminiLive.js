@@ -1,12 +1,12 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { GoogleGenAI } from "@google/genai";
 
-export function useGeminiLive({ systemPrompt, onMetrics }) {
+export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false, onMetrics }) {
   const [isConnected, setIsConnected] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [micActive, setMicActive] = useState(true);
-  const [cameraActive, setCameraActive] = useState(false);
   const [liveTip, setLiveTip] = useState(null);
+  const [isDropped, setIsDropped] = useState(false);
 
   const sessionRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -14,6 +14,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
   const micStreamRef = useRef(null);
   const micActiveRef = useRef(true);
   const isConnectingRef = useRef(false);
+  const intentionalCloseRef = useRef(false);
 
   const videoStreamRef = useRef(null);
   const videoElRef = useRef(null);
@@ -33,106 +34,82 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
   }, [onMetrics]);
 
   // ─────────────────────────────────────────
-  // Mic Capture
+  // Media Setup
   // ─────────────────────────────────────────
-  async function startMic() {
-    try {
-      const micStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-      micStreamRef.current = micStream;
+  const canvasRef = useRef(null);
 
-      // Must match the mimeType rate sent to Gemini — browser will resample to 16 kHz
-      audioContextRef.current = new AudioContext({ sampleRate: 16000 });
-      const source = audioContextRef.current.createMediaStreamSource(micStream);
+  async function startMedia() {
+    let stream;
+    if (withVideo) {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        const videoStream = new MediaStream(stream.getVideoTracks());
+        videoStreamRef.current = videoStream;
+        const video = document.createElement("video");
+        video.srcObject = videoStream;
+        video.play();
+        videoElRef.current = video;
+        console.log("📷 Camera started");
 
-      processorRef.current = audioContextRef.current.createScriptProcessor(
-        4096,
-        1,
-        1,
-      );
-
-      processorRef.current.onaudioprocess = (e) => {
-        if (!micActiveRef.current || !sessionRef.current) return;
-
-        const float32 = e.inputBuffer.getChannelData(0);
-        const pcm16 = float32ToPCM16(float32);
-
-        const base64 = arrayBufferToBase64(pcm16.buffer);
-
-        // const sampleRate = audioContextRef.current.sampleRate;
-
-        sessionRef.current.sendRealtimeInput({
-          audio: {
-            data: base64,
-            mimeType: "audio/pcm;rate=16000",
-          },
-        });
-      };
-
-      source.connect(processorRef.current);
-      processorRef.current.connect(audioContextRef.current.destination);
-
-      console.log("🎤 Mic started");
-    } catch (err) {
-      console.error("Mic error:", err);
-    }
-  }
-
-  // ─────────────────────────────────────────
-  // Camera Capture
-  // ─────────────────────────────────────────
-  async function startCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoStreamRef.current = stream;
-
-      // Offscreen video element to draw frames from
-      const video = document.createElement("video");
-      video.srcObject = stream;
-      video.play();
-      videoElRef.current = video;
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 640;
-      canvas.height = 480;
-
-      // Send 1 frame per second — mirrors the Python reference
-      frameIntervalRef.current = setInterval(() => {
-        if (!sessionRef.current || !videoElRef.current) return;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(videoElRef.current, 0, 0, 640, 480);
-        canvas.toBlob((blob) => {
-          if (!blob) return;
-          blob.arrayBuffer().then((buffer) => {
-            sessionRef.current?.sendRealtimeInput({
-              video: { data: arrayBufferToBase64(buffer), mimeType: "image/jpeg" },
+        // Auto-start frame sending
+        if (!canvasRef.current) {
+          canvasRef.current = document.createElement("canvas");
+          canvasRef.current.width = 640;
+          canvasRef.current.height = 480;
+        }
+        const canvas = canvasRef.current;
+        frameIntervalRef.current = setInterval(() => {
+          if (!sessionRef.current || !videoElRef.current) return;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(videoElRef.current, 0, 0, 640, 480);
+          canvas.toBlob((blob) => {
+            if (!blob) return;
+            blob.arrayBuffer().then((buffer) => {
+              sessionRef.current?.sendRealtimeInput({
+                video: { data: arrayBufferToBase64(buffer), mimeType: "image/jpeg" },
+              });
             });
-          });
-        }, "image/jpeg", 0.7);
-      }, 1000);
-
-      setCameraActive(true);
-      console.log("📷 Camera started");
-    } catch (err) {
-      console.error("Camera error:", err);
+          }, "image/jpeg", 0.7);
+        }, 1000);
+      } catch {
+        console.warn("Camera unavailable, falling back to audio only");
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
+    } else {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (err) {
+        console.error("Mic error:", err);
+        return;
+      }
     }
-  }
 
-  function toggleCamera() {
-    const track = videoStreamRef.current?.getVideoTracks()[0];
-    if (track) {
-      track.enabled = !track.enabled;
-      setCameraActive((v) => !v);
-    }
+    const audioStream = new MediaStream(stream.getAudioTracks());
+    micStreamRef.current = audioStream;
+    audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+    const source = audioContextRef.current.createMediaStreamSource(audioStream);
+    processorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1);
+    processorRef.current.onaudioprocess = (e) => {
+      if (!micActiveRef.current || !sessionRef.current) return;
+      const float32 = e.inputBuffer.getChannelData(0);
+      const pcm16 = float32ToPCM16(float32);
+      sessionRef.current.sendRealtimeInput({
+        audio: { data: arrayBufferToBase64(pcm16.buffer), mimeType: "audio/pcm;rate=16000" },
+      });
+    };
+    source.connect(processorRef.current);
+    processorRef.current.connect(audioContextRef.current.destination);
+    console.log("🎤 Mic started");
   }
 
   // ─────────────────────────────────────────
   // Connect
   // ─────────────────────────────────────────
-  const connect = useCallback(async () => {
+  async function connect() {
     if (isConnectingRef.current || sessionRef.current) return;
     isConnectingRef.current = true;
+    intentionalCloseRef.current = false;
+    setIsDropped(false);
 
     try {
       const ai = new GoogleGenAI({
@@ -148,7 +125,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
           mediaResolution: "MEDIA_RESOLUTION_LOW",
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: "Puck" },
+              prebuiltVoiceConfig: { voiceName: voice },
             },
           },
           outputAudioTranscription: {},
@@ -195,9 +172,8 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
         callbacks: {
           onopen: async () => {
             console.log("✅ Gemini connected");
+            await startMedia();
             setIsConnected(true);
-            await startMic();
-            await startCamera();
             // Nudge Gemini to deliver its opening line — the system instruction
             // already specifies the exact line to use for this scenario.
             sessionRef.current?.sendClientContent({
@@ -211,6 +187,11 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
 
             setIsConnected(false);
             setIsSpeaking(false);
+
+            if (!intentionalCloseRef.current) {
+              console.warn("⚠️ Session dropped unexpectedly:", e?.code, e?.reason);
+              setIsDropped(true);
+            }
 
             sessionRef.current = null;
             isConnectingRef.current = false;
@@ -236,9 +217,13 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
                 }
               }
               // Acknowledge all calls so the model doesn't wait
-              sessionRef.current?.sendToolResponse({
-                functionResponses: calls.map((fn) => ({ id: fn.id, name: fn.name, response: { result: "ok" } })),
-              });
+              try {
+                sessionRef.current?.sendToolResponse({
+                  functionResponses: calls.map((fn) => ({ id: fn.id, name: fn.name, response: { result: "ok" } })),
+                });
+              } catch {
+                // Session already closed — drop silently
+              }
               return;
             }
 
@@ -291,7 +276,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
       sessionRef.current = null;
       isConnectingRef.current = false;
     }
-  }, [systemPrompt]);
+  }
 
   // ─────────────────────────────────────────
   // Disconnect
@@ -317,8 +302,8 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
     videoElRef.current = null;
     videoStreamRef.current?.getTracks().forEach((t) => t.stop());
     videoStreamRef.current = null;
-    setCameraActive(false);
-
+    canvasRef.current = null;
+    intentionalCloseRef.current = true;
     sessionRef.current?.close();
     sessionRef.current = null;
 
@@ -358,11 +343,10 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
     connect,
     disconnect,
     isConnected,
+    isDropped,
     isSpeaking,
     micActive,
     toggleMic,
-    cameraActive,
-    toggleCamera,
     videoStream: videoStreamRef,
     liveTip,
     getTranscript,
