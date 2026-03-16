@@ -77,7 +77,7 @@ export function ScenarioSelect({ scenarios, onSessionStart, onViewProgress }) {
         </h1>
         <p className="text-(--muted) text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
           Talk with an AI persona in realistic networking scenarios. Get live
-          coaching and detailed feedback — so you're ready when it counts.
+          coaching and detailed feedback, so you're ready when it counts.
         </p>
       </div>
 
