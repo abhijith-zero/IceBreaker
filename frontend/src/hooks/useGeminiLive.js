@@ -112,6 +112,11 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
     processorRef.current.onaudioprocess = (e) => {
       if (!micActiveRef.current || !sessionRef.current) return;
       const float32 = e.inputBuffer.getChannelData(0);
+      if (!userSpokeRef.current) {
+        let sum = 0;
+        for (let i = 0; i < float32.length; i++) sum += float32[i] * float32[i];
+        if (Math.sqrt(sum / float32.length) > 0.01) userSpokeRef.current = true;
+      }
       const pcm16 = float32ToPCM16(float32);
       sessionRef.current.sendRealtimeInput({
         audio: { data: arrayBufferToBase64(pcm16.buffer), mimeType: "audio/pcm;rate=16000" },
@@ -291,11 +296,6 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
                 console.log("📝 inline text:", part.text.slice(0, 120));
                 textBufferRef.current += part.text;
               }
-            }
-
-            // Input audio transcription — user's speech
-            if (sc.inputTranscription?.text?.trim()) {
-              userSpokeRef.current = true;
             }
 
             // Output audio transcription — JS equivalent of Python's response.text

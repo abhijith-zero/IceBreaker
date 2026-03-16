@@ -83,6 +83,7 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
       }, 200);
     });
 
+    const metrics = getMetrics();
     if (!hasUserSpoken()) {
       releaseMedia();
       setIsEnding(false);
@@ -93,7 +94,6 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
     releaseMedia();
     try {
       const transcript = getTranscript();
-      const metrics = getMetrics();
       console.log("📤 Sending transcript:", transcript.slice(0, 200));
       console.log("📊 Sending metrics:", metrics);
       const res = await api.endSession(sessionId, { transcript, metrics });
