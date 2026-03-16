@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: .
+      target: builder # builder stage runs as root
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount code for hot reload
+      - .:/app
+      # Windows: gcloud credentials live in %APPDATA%\gcloud
+      # Mac/Linux: change this to ~/.config/gcloud:/root/.config/gcloud:ro
+      - ${APPDATA}/gcloud:/root/.config/gcloud:ro
+    env_file:
+      - .env # loads all variables from .env automatically
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+      # Points to credentials inside the container
+      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+
+    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload

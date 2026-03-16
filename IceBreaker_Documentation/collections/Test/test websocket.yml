@@ -1,0 +1,21 @@
+info:
+  name: test websocket
+  type: websocket
+  seq: 5
+
+websocket:
+  url: ws://localhost:8080/ws
+  message:
+    type: json
+    data: |-
+      
+      {
+        "type": "start_session",
+        "scenario_id": "warmup",
+        "user_id": "test_user"
+      }
+  auth: inherit
+
+settings:
+  timeout: 0
+  keepAliveInterval: 0

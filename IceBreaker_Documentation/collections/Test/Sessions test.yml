@@ -1,0 +1,22 @@
+info:
+  name: Sessions test
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: http://localhost:8080/sessions/start
+  body:
+    type: json
+    data: |-
+      {
+        "scenario_id": "warmup",
+        "user_id": "test"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

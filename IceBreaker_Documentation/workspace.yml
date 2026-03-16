@@ -1,0 +1,12 @@
+opencollection: 1.0.0
+info:
+  name: "IceBreaker_Documentation"
+  type: workspace
+
+collections:
+  - name: "Test"
+    path: "collections/Test"
+
+specs:
+
+docs: ''

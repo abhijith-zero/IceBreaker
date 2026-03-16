@@ -1,0 +1,36 @@
+info:
+  name: Sessions turn test
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: http://localhost:8080/sessions/{{session_id}}/turn
+  body:
+    type: json
+    data: |-
+      {
+        "user_text": "Hey, yeah I'm here for the full conference!",
+        "ai_text": "Oh nice! What brings you specifically to this one?",
+        "metrics": {
+          "talk_ratio_user": 0.45,
+          "questions_asked": 0,
+          "filler_words": [],
+          "posture_confidence": 0.7,
+          "expression_warmth": 0.6,
+          "sentiment": "warming",
+          "anxiety_audio": false
+        }
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: session_id
+      value: e1a713f8-6eb2-4c83-a7a6-d596bfe5e9eb
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

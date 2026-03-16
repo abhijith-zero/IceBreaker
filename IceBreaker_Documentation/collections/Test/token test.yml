@@ -1,0 +1,22 @@
+info:
+  name: token test
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: http://localhost:8080/tokens?scenario_id=warmup&user_id=guest_test123
+  params:
+    - name: scenario_id
+      value: warmup
+      type: query
+    - name: user_id
+      value: guest_test123
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

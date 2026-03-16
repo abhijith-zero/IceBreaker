@@ -1,0 +1,20 @@
+info:
+  name: end session
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: http://localhost:8080/sessions/{{session_id}}/end
+  auth: inherit
+
+runtime:
+  variables:
+    - name: session_id
+      value: e1a713f8-6eb2-4c83-a7a6-d596bfe5e9eb
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
