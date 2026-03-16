@@ -1,19 +1,19 @@
 import { DifficultyBadge } from "./DifficultyBadge";
 
 const ICONS = {
-  coffee_chat: "☕",
+  warmup: "☕",
+  tech_mixer: "💻",
   conference: "🎤",
-  interview: "💼",
-  networking: "🤝",
-  virtual: "💻",
+  weak_tie: "🤝",
+  cold_intro: "⚡",
 };
 
 const ACCENTS = {
-  coffee_chat: "#D97706",
+  warmup: "#D97706",
+  tech_mixer: "#059669",
   conference: "#7C3AED",
-  interview: "#2563EB",
-  networking: "#059669",
-  virtual: "#DC2626",
+  weak_tie: "#2563EB",
+  cold_intro: "#DC2626",
 };
 
 /**
@@ -75,7 +75,7 @@ export function ScenarioCard({
       </h3>
 
       <p className="text-[13px] text-(--muted) leading-relaxed mb-5">
-        {scenario.opening_line}
+        {scenario.description ?? scenario.opening_line}
       </p>
 
       {/* Persona chip */}
@@ -85,6 +85,11 @@ export function ScenarioCard({
           <p className="text-[12px] font-medium text-(--muted)">
             {scenario.persona_name}
           </p>
+          {scenario.persona_role && (
+            <p className="text-[11px] text-(--subtle)">
+              {scenario.persona_role}
+            </p>
+          )}
         </div>
       </div>
 

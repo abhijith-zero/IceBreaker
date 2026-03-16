@@ -46,8 +46,20 @@ export function useGeminiLive({ systemPrompt, voice = "Puck", withVideo = false,
   const canvasRef = useRef(null);
 
   async function startMedia() {
+    // Stop any existing tracks before (re)starting — prevents stale camera on reconnect
+    processorRef.current?.disconnect();
+    processorRef.current = null;
+    micStreamRef.current?.getTracks().forEach((t) => t.stop());
+    micStreamRef.current = null;
+    clearInterval(frameIntervalRef.current);
+    frameIntervalRef.current = null;
+    videoStreamRef.current?.getTracks().forEach((t) => t.stop());
+    videoStreamRef.current = null;
+    videoElRef.current?.pause();
+    videoElRef.current = null;
+
     let stream;
-    if (withVideo) {
+    if (withVideoRef.current) {
       try {
         stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
         const videoStream = new MediaStream(stream.getVideoTracks());

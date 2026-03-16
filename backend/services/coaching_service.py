@@ -117,13 +117,13 @@ class CoachingService:
     def _empty_debrief(self) -> Debrief:
         return Debrief(
             score=ScoreBreakdown(
-                talk_ratio=10,
-                questions_asked=10,
-                filler_words=10,
-                posture_confidence=7.5,
-                sentiment_trend=10,
-                recovery_moments=10,
-                total=57.5,
+                talk_ratio=0,
+                questions_asked=0,
+                filler_words=0,
+                posture_confidence=0,
+                sentiment_trend=0,
+                recovery_moments=0,
+                total=0,
             ),
             strengths=["You completed a practice session — that takes courage"],
             focus_areas=["Keep practicing to get more detailed feedback"],

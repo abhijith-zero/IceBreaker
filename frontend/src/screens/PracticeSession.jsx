@@ -291,7 +291,7 @@ export function PracticeSession({ context, onSessionEnd, onExit }) {
                   Reconnect
                 </button>
                 <button
-                  onClick={onExit}
+                  onClick={() => { releaseMedia(); onExit(); }}
                   className="px-5 py-2 rounded-xl bg-(--faint) border border-(--border-color) text-(--muted) text-sm hover:text-(--fg) transition-colors"
                 >
                   Exit

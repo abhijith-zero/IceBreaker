@@ -6,9 +6,10 @@ class ScenarioOut(BaseModel):
     name: str
     difficulty: str
     persona_name: str
+    persona_role: str = ""
+    description: str = ""
     opening_line: str
 
-    # We expose only what the frontend needs
     # persona_backstory stays server-side (it's part of the prompt)
 
 
