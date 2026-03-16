@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { SessionSidebar } from "../components/SessionSidebar";
 import { CoachingPanel } from "../components/CoachingPanel";
+import { WebcamPreview } from "../components/WebcamPreview";
 import { useGeminiLive } from "../hooks/useGeminiLive";
 import { useSessionTimer } from "../hooks/useSessionTimer";
 import { api } from "../lib/api";
@@ -21,6 +22,8 @@ export function PracticeSession({ context, onSessionEnd }) {
     if (metrics.tip) setLiveTipState(metrics.tip);
   }, []);
 
+  const videoPreviewRef = useRef(null);
+
   const {
     connect,
     disconnect,
@@ -28,9 +31,21 @@ export function PracticeSession({ context, onSessionEnd }) {
     isSpeaking,
     micActive,
     toggleMic,
+    cameraActive,
+    toggleCamera,
+    videoStream,
     liveTip,
     getTranscript,
+    getMetrics,
+    requestMetrics,
   } = useGeminiLive({ systemPrompt, onMetrics: handleMetrics });
+
+  // Wire webcam stream to the preview element
+  useEffect(() => {
+    if (videoPreviewRef.current && videoStream.current) {
+      videoPreviewRef.current.srcObject = videoStream.current;
+    }
+  }, [cameraActive, videoStream]);
 
   useEffect(() => {
     return () => disconnect();
@@ -44,11 +59,26 @@ export function PracticeSession({ context, onSessionEnd }) {
   async function handleEnd() {
     if (isEnding) return;
     setIsEnding(true);
+
+    // Ask the model to call submit_metrics, wait up to 8s for the tool call
+    requestMetrics();
+    await new Promise((resolve) => {
+      const start = Date.now();
+      const check = setInterval(() => {
+        if (getMetrics() || Date.now() - start > 8000) {
+          clearInterval(check);
+          resolve();
+        }
+      }, 200);
+    });
+
     disconnect();
     try {
       const transcript = getTranscript();
+      const metrics = getMetrics();
       console.log("📤 Sending transcript:", transcript.slice(0, 200));
-      const res = await api.endSession(sessionId, { transcript });
+      console.log("📊 Sending metrics:", metrics);
+      const res = await api.endSession(sessionId, { transcript, metrics });
       onSessionEnd(res.debrief);
     } catch (err) {
       console.error("Failed to end session:", err);
@@ -82,17 +112,28 @@ export function PracticeSession({ context, onSessionEnd }) {
             </p>
           </div>
           {started && (
-            <button
-              onClick={toggleMic}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all
-                ${
-                  micActive
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleMic}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all
+                  ${micActive
                     ? "bg-white/6 border border-white/10 hover:bg-white/10"
                     : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
-                }`}
-            >
-              {micActive ? "🎤" : "🔇"}
-            </button>
+                  }`}
+              >
+                {micActive ? "🎤" : "🔇"}
+              </button>
+              <button
+                onClick={toggleCamera}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all
+                  ${cameraActive
+                    ? "bg-white/6 border border-white/10 hover:bg-white/10"
+                    : "bg-red-500/10 border border-red-500/25 hover:bg-red-500/20"
+                  }`}
+              >
+                {cameraActive ? "📷" : "🚫"}
+              </button>
+            </div>
           )}
         </div>
 
@@ -137,6 +178,16 @@ export function PracticeSession({ context, onSessionEnd }) {
                 )}
               </div>
             </div>
+
+            {/* Webcam preview — shown when session is active */}
+            {started && (
+              <WebcamPreview
+                videoRef={videoPreviewRef}
+                camActive={cameraActive}
+                micActive={micActive}
+                isSpeaking={isSpeaking}
+              />
+            )}
 
             {/* Opening line */}
             <div className="p-4 rounded-xl bg-white/3 border border-white/6">

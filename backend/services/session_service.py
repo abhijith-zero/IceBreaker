@@ -101,7 +101,7 @@ class SessionService:
             f"| talk_ratio: {snapshot.talk_ratio_user:.2f}"
         )
 
-    def end_session(self, session_id: str) -> Debrief:
+    def end_session(self, session_id: str, metrics: dict | None = None) -> Debrief:
         """
         Ends the session and generates the full debrief.
         Cleans up from memory after generating report.
@@ -111,7 +111,7 @@ class SessionService:
         session.end_time = datetime.now().timestamp()
         session.duration = session.end_time - session.start_time
 
-        debrief = self.coaching_service.generate_debrief(session)
+        debrief = self.coaching_service.generate_debrief(session, metrics=metrics)
 
         # Remove from active memory
         self._sessions.pop(session_id, None)

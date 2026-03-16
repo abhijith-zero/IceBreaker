@@ -21,6 +21,7 @@ progress_repo   = ProgressRepository()
 
 class EndSessionRequest(BaseModel):
     transcript: str = ""
+    metrics: dict | None = None
 
 
 @router.post("/start", response_model=StartSessionResponse)
@@ -59,12 +60,13 @@ async def end_session(session_id: str, body: EndSessionRequest = None):
     user_id     = session.user_id
     scenario_id = session.scenario_id
 
-    # Attach transcript to session so coaching service can use it
     transcript = body.transcript if body else ""
+    metrics    = body.metrics if body else None
+
     if transcript:
         session.transcript_text = transcript
 
-    debrief = session_service.end_session(session_id)
+    debrief = session_service.end_session(session_id, metrics=metrics)
 
     await session_repo.save_session_report(
         session_id=session_id,

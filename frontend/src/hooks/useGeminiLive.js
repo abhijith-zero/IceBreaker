@@ -5,6 +5,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
   const [isConnected, setIsConnected] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [micActive, setMicActive] = useState(true);
+  const [cameraActive, setCameraActive] = useState(false);
   const [liveTip, setLiveTip] = useState(null);
 
   const sessionRef = useRef(null);
@@ -14,11 +15,16 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
   const micActiveRef = useRef(true);
   const isConnectingRef = useRef(false);
 
+  const videoStreamRef = useRef(null);
+  const videoElRef = useRef(null);
+  const frameIntervalRef = useRef(null);
+
   const playbackCtxRef = useRef(null);
   const nextStartTimeRef = useRef(0);
 
   const metricsTranscriptRef = useRef("");
   const textBufferRef = useRef("");
+  const finalMetricsRef = useRef(null);
 
   const onMetricsRef = useRef(onMetrics);
 
@@ -74,6 +80,54 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
   }
 
   // ─────────────────────────────────────────
+  // Camera Capture
+  // ─────────────────────────────────────────
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoStreamRef.current = stream;
+
+      // Offscreen video element to draw frames from
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      video.play();
+      videoElRef.current = video;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 640;
+      canvas.height = 480;
+
+      // Send 1 frame per second — mirrors the Python reference
+      frameIntervalRef.current = setInterval(() => {
+        if (!sessionRef.current || !videoElRef.current) return;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoElRef.current, 0, 0, 640, 480);
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          blob.arrayBuffer().then((buffer) => {
+            sessionRef.current?.sendRealtimeInput({
+              video: { data: arrayBufferToBase64(buffer), mimeType: "image/jpeg" },
+            });
+          });
+        }, "image/jpeg", 0.7);
+      }, 1000);
+
+      setCameraActive(true);
+      console.log("📷 Camera started");
+    } catch (err) {
+      console.error("Camera error:", err);
+    }
+  }
+
+  function toggleCamera() {
+    const track = videoStreamRef.current?.getVideoTracks()[0];
+    if (track) {
+      track.enabled = !track.enabled;
+      setCameraActive((v) => !v);
+    }
+  }
+
+  // ─────────────────────────────────────────
   // Tip Parser
   // ─────────────────────────────────────────
   function tryParseTip(text) {
@@ -103,6 +157,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
 
         config: {
           responseModalities: ["AUDIO"],
+          mediaResolution: "MEDIA_RESOLUTION_LOW",
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: { voiceName: "Puck" },
@@ -110,6 +165,30 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
           },
           outputAudioTranscription: {},
           systemInstruction: systemPrompt,
+          tools: [{
+            functionDeclarations: [{
+              name: "submit_metrics",
+              description: "Call this at the end of the conversation to submit your assessment of the user's communication performance.",
+              parameters: {
+                type: "OBJECT",
+                properties: {
+                  talk_ratio_user: { type: "NUMBER", description: "Fraction of conversation the user contributed (0.0-1.0)" },
+                  questions_asked: { type: "INTEGER", description: "Number of open-ended questions the user asked" },
+                  filler_words: { type: "INTEGER", description: "Count of filler words like um/uh/like the user used" },
+                  sentiment: { type: "STRING", description: "Overall rapport trend: warming, neutral, or cooling" },
+                  anxiety_audio: { type: "BOOLEAN", description: "Whether the user seemed nervous based on their language" },
+                  speech_pace: { type: "STRING", description: "slow, normal, or fast" },
+                  voice_confidence: { type: "NUMBER", description: "How confident the user sounded (0.0-1.0)" },
+                  engagement_score: { type: "NUMBER", description: "How engaged the conversation was (0.0-1.0)" },
+                  eye_contact: { type: "NUMBER", description: "How consistently the user looked at the camera (0.0-1.0). Default 0.5 if no video." },
+                  posture: { type: "STRING", description: "User's posture observed via camera: upright, slouched, or tense. Default upright if no video." },
+                  strengths: { type: "ARRAY", items: { type: "STRING" }, description: "Up to 3 things the user did well" },
+                  focus_areas: { type: "ARRAY", items: { type: "STRING" }, description: "Up to 3 things to improve" },
+                },
+                required: ["talk_ratio_user", "questions_asked", "filler_words", "sentiment", "voice_confidence", "eye_contact", "posture", "strengths", "focus_areas"],
+              },
+            }],
+          }],
         },
 
         callbacks: {
@@ -117,6 +196,7 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
             console.log("✅ Gemini connected");
             setIsConnected(true);
             await startMic();
+            await startCamera();
             // Nudge Gemini to deliver its opening line — the system instruction
             // already specifies the exact line to use for this scenario.
             sessionRef.current?.sendClientContent({
@@ -140,6 +220,21 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
           },
 
           onmessage: (message) => {
+            // Tool call — model submitting final metrics
+            if (message.toolCall) {
+              const fn = message.toolCall.functionCalls?.[0];
+              if (fn?.name === "submit_metrics") {
+                console.log("📊 submit_metrics tool call:", fn.args);
+                finalMetricsRef.current = fn.args;
+                if (onMetricsRef.current) onMetricsRef.current({ finalMetrics: fn.args });
+              }
+              // Send tool response so the model doesn't wait
+              sessionRef.current?.sendToolResponse({
+                functionResponses: [{ id: fn?.id, name: fn?.name, response: { result: "ok" } }],
+              });
+              return;
+            }
+
             const sc = message.serverContent;
             if (!sc) return;
 
@@ -210,6 +305,14 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
     micStreamRef.current?.getTracks().forEach((t) => t.stop());
     micStreamRef.current = null;
 
+    clearInterval(frameIntervalRef.current);
+    frameIntervalRef.current = null;
+    videoElRef.current?.pause();
+    videoElRef.current = null;
+    videoStreamRef.current?.getTracks().forEach((t) => t.stop());
+    videoStreamRef.current = null;
+    setCameraActive(false);
+
     sessionRef.current?.close();
     sessionRef.current = null;
 
@@ -234,6 +337,17 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
     return metricsTranscriptRef.current;
   }
 
+  function getMetrics() {
+    return finalMetricsRef.current;
+  }
+
+  function requestMetrics() {
+    sessionRef.current?.sendClientContent({
+      turns: [{ role: "user", parts: [{ text: "The session is ending now. Please call submit_metrics with your full assessment of our conversation." }] }],
+      turnComplete: true,
+    });
+  }
+
   return {
     connect,
     disconnect,
@@ -241,8 +355,13 @@ export function useGeminiLive({ systemPrompt, onMetrics }) {
     isSpeaking,
     micActive,
     toggleMic,
+    cameraActive,
+    toggleCamera,
+    videoStream: videoStreamRef,
     liveTip,
     getTranscript,
+    getMetrics,
+    requestMetrics,
   };
 }
 

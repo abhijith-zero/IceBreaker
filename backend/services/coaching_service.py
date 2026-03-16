@@ -14,16 +14,21 @@ class CoachingService:
 
     # ── Debrief Generation ────────────────────────────────────
 
-    def generate_debrief(self, session: SessionState) -> Debrief:
-        transcript_text = getattr(session, "transcript_text", "")
+    def generate_debrief(self, session: SessionState, metrics: dict | None = None) -> Debrief:
+        # Use tool-call metrics from the Live session if available
+        if metrics:
+            logger.info("Building debrief from Live session tool-call metrics")
+            return self._debrief_from_analysis(metrics, session)
 
+        # Fallback: send transcript to LM Studio for analysis
+        transcript_text = getattr(session, "transcript_text", "")
         if transcript_text and transcript_text.strip():
             analysis = self._gemini.analyze_transcript(transcript_text)
             if analysis:
-                logger.info("Building debrief from Gemini analysis")
+                logger.info("Building debrief from LM Studio analysis")
                 return self._debrief_from_analysis(analysis, session)
 
-        logger.warning("Gemini analysis unavailable — returning empty debrief")
+        logger.warning("No metrics or transcript available — returning empty debrief")
         return self._empty_debrief()
 
     # ── Build debrief from Gemini analysis ───────────────────
@@ -77,9 +82,12 @@ class CoachingService:
         else:
             filler_score = 5.0
 
-        # ── Voice Confidence (15pts) ──────────────────────────
-        confidence    = float(analysis.get("voice_confidence", 0.5))
-        posture_score = round(confidence * 15, 1)
+        # ── Voice Confidence + Eye Contact / Posture (15pts) ─────
+        confidence   = float(analysis.get("voice_confidence", 0.5))
+        eye_contact  = float(analysis.get("eye_contact", 0.5))
+        posture_map  = {"upright": 1.0, "tense": 0.6, "slouched": 0.3}
+        posture_mult = posture_map.get(analysis.get("posture", "upright"), 0.7)
+        posture_score = round(((confidence + eye_contact) / 2 * posture_mult) * 15, 1)
 
         # ── Sentiment Trend (15pts) ───────────────────────────
         sentiment_map   = {"warming": 15.0, "neutral": 10.0, "cooling": 5.0}
