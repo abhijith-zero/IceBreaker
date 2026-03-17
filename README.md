@@ -79,3 +79,5 @@ VITE_GEMINI_API_KEY=your-gemini-api-key  # from Google AI Studio
 - Edge AI: Google Vertex AI (Gemini Live API)
 - Database: Google Firestore
 - Deployment: Google Cloud Run
+## live demo
+https://www.youtube.com/watch?v=tzVNInOyP6M
