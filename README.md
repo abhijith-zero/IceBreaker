@@ -81,3 +81,5 @@ VITE_GEMINI_API_KEY=your-gemini-api-key  # from Google AI Studio
 - Deployment: Google Cloud Run
 ## live demo
 https://www.youtube.com/watch?v=tzVNInOyP6M
+## Blog link
+https://dev.to/abhijithzero/how-i-build-an-ai-conversation-coach-with-gemini-live-api-for-gemini-live-agent-challenge-p6f
